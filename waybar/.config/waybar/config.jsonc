@@ -1,0 +1,178 @@
+{
+    "layer": "top",
+    "position": "top",
+    // "modules-left": ["clock", "custom/appmenu", "wlr/taskbar"],
+    "modules-left": ["tray", "group/group-power", "wlr/taskbar"],
+    "modules-center": ["hyprland/workspaces"],
+    // "modules-right": ["cpu","memory","disk", "network", "battery", "pulseaudio", "tray", "group/group-power"],
+    "modules-right": ["cpu", "memory", "disk", "network", "battery", "pulseaudio", "clock"],
+    "custom/appmenu": {
+        "format": "",
+        "rotate": 0,
+        "on-click": "~/.config/waybar/runwofi.sh"
+    },
+
+    "wlr/taskbar": {
+        "format": "{icon}",
+        "tooltip": true,
+        "tooltip-format": "{title}",
+        "on-click": "activate",
+        "on-click-middle": "close",
+        "active-first": false
+    },
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "1": "󰧞",
+            "2": "󰧞",
+            "3": "󰧞",
+            "4": "󰧞",
+            "5": "󰧞",
+            "6": "󰧞",
+            "7": "󰧞",
+            "8": "󰧞",
+            "9": "󰧞",
+            "10": "󰧞",
+            "active": "󰮯", // highlighted active
+            "default": "󰧞"
+        },
+        "persistent-workspaces": {
+            "HDMI-A-1": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        }
+    },
+
+    "clock": {
+        "format": "󰥔 {:%I:%M %p}",
+        "rotate": 0,
+        "format-alt": "󰃰 {:%A, %B %d, %Y (%R)}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "format": {
+                "months": "<span color='#aecce6'><b>{}</b></span>",
+                "days": "<span color='#aecce6'><b>{}</b></span>",
+                "weekdays": "<span color='#df373a'><b>{}</b></span>",
+                "today": "<span color='#df373a'><b>{}</b></span>"
+            }
+        }
+    },
+
+    "cpu": {
+        "format": "  CPU: {usage}%",
+        "tooltip": true
+    },
+
+    "memory": {
+        "interval": 5,
+        "format": "󰍛 MEM: {}%",
+        "max-length": 15
+    },
+
+    "disk": {
+        "interval": 30,
+        "format": "󰋊 {used}",
+        "unit": "GB",
+        "tooltip-format": "󰋊 {percentage_used}%"
+    },
+
+    // "network": {
+    //     "tooltip": true,
+    //     "rotate": 0,
+    //     "format-ethernet": "󰈁 {bandwidthDownBytes}",
+    //     "format-linked": "󰈀 {ifname} (No IP)",
+    //     "format-disconnected": "󰖪",
+    //     "tooltip-format-disconnected": "Disconnected",
+    //     "format-alt": " Up: {bandwidthUpBytes}",
+    //     "interval": 2
+    // },
+
+    "network": {
+        "tooltip": true,
+        "rotate": 0,
+        "format-wifi": "  ↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
+        "format-ethernet": "󰈁 ↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
+        "format-disconnected": "󰖪",
+        "tooltip-format-disconnected": "Disconnected",
+        "interval": 2,
+        "on-click": "kitty nmtui"
+    },
+    "battery": {
+	    "bat": "BAT0",  // or BAT1 depending on your system; check with `upower -e` or `ls /sys/class/power_supply/`
+	    "format": "{icon} {capacity}%",
+	    "format-charging": " {capacity}%",
+	    "format-plugged": " {capacity}%",
+	    "format-alt": "{time} remaining",
+	    "tooltip": true,
+	    "format-icons": ["", "", "", "", ""]
+    },
+
+
+    "tray": {
+        "icon-size": 22,
+        "spacing": 10
+    },
+
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "{volume}% {icon}",
+        "format-muted": "󰝟",
+        "format-icons": {
+            "alsa_output.pci-0000_00_1f.3.analog-stereo": "󰕾",
+            "alsa_output.pci-0000_00_1f.3.analog-stereo-muted": "󰝟",
+            "headphone": "󰋋",
+            "hands-free": "󰍛",
+            "headset": "󰋎",
+            "phone": "",
+            "phone-muted": "",
+            "portable": "",
+            "car": "",
+            "default": ["", ""]
+        },
+        "scroll-step": 3,
+        "on-click": "pavucontrol",
+        "ignored-sinks": ["Easy Effects Sink"]
+    },
+
+    "group/group-power": {
+        "orientation": "horizontal",
+        "drawer": {
+            "transition-duration": 500,
+            "children-class": "not-power",
+            "transition-left-to-right": false
+        },
+        "modules": ["user", "custom/shutdown", "custom/quit", "custom/lock", "custom/reboot"]
+    },
+
+    "custom/quit": {
+        "format": "󰗼",
+        "tooltip-format": "Exit",
+        "on-click": "hyprctl dispatch exit"
+    },
+
+    "custom/lock": {
+        "format": "󰍁",
+        "tooltip-format": "Lock",
+        "on-click": "hyprlock"
+    },
+
+    "custom/reboot": {
+        "format": "󰜉",
+        "tooltip-format": "Reboot",
+        "on-click": "reboot"
+    },
+
+    "custom/shutdown": {
+        "format": "󰐥",
+        "tooltip-format": "Shutdown",
+        "on-click": "shutdown now"
+    },
+
+    "user": {
+        "format": "",
+        "height": 20,
+        "width": 20,
+        "icon": true
+    }
+}
+
