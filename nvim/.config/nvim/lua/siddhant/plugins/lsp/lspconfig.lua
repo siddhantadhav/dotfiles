@@ -4,11 +4,24 @@ return {
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     { "antosha417/nvim-lsp-file-operations", config = true },
-    { "folke/neodev.nvim", opts = {} },
+    { "folke/neodev.nvim",                   opts = {} },
+    "mason-org/mason-lspconfig.nvim",
   },
   config = function()
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
     local keymap = vim.keymap
+
+    local function go_format_and_imports()
+      vim.lsp.buf.format({ async = false })
+      local params = {
+        context = { only = { "source.organizeImports" } },
+        apply = true,
+      }
+      local result = vim.lsp.buf.code_action(params)
+      vim.api.nvim_buf_call(0, function()
+        vim.cmd("update")
+      end)
+    end
 
     -- LSP keymaps applied on attach
     vim.api.nvim_create_autocmd("LspAttach", {
@@ -29,11 +42,54 @@ return {
         keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
         keymap.set("n", "K", vim.lsp.buf.hover, opts)
         keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts)
+        keymap.set({ "n", "v" }, "<leader>lf", function() vim.lsp.buf.format({ async = true }) end, opts)
       end,
     })
 
     -- enable autocompletion capabilities for all servers
     local capabilities = cmp_nvim_lsp.default_capabilities()
+
+    -- configure LSP servers with vim.lsp.config() (Neovim v0.11+)
+    -- default capabilities for all servers
+    vim.lsp.config("*", {
+      capabilities = capabilities,
+    })
+
+    -- lua_ls specific configuration
+    vim.lsp.config("lua_ls", {
+      capabilities = capabilities,
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { "vim" },
+          },
+          workspace = {
+            library = vim.api.nvim_get_runtime_file("", true),
+            checkThirdParty = false,
+          },
+          telemetry = { enable = false },
+        },
+      },
+    })
+
+    vim.lsp.config("gopls", {
+      capabilities = capabilities,
+      settings = {
+        gopls = {
+          gofumpt = true,
+          analyses = {
+            unusedparams = true,
+          },
+        },
+      },
+      -- auto format + organize imports on save
+      on_attach = function(client, bufnr)
+        vim.api.nvim_create_autocmd("BufWritePre", {
+          buffer = bufnr,
+          callback = go_format_and_imports,
+        })
+      end,
+    })
 
     -- modern diagnostic signs (replaces vim.fn.sign_define)
     vim.diagnostic.config({
@@ -47,10 +103,6 @@ return {
       },
     })
 
-    -- manual server configuration example (empty, configure when needed)
-    local lspconfig = require("lspconfig")
-    -- e.g.:
-    -- lspconfig.tsserver.setup({ capabilities = capabilities })
-    -- lspconfig.lua_ls.setup({ capabilities = capabilities })
+    -- LSP servers are auto-configured via mason-lspconfig automatic_enable
   end,
 }
