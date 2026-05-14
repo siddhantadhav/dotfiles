@@ -1,0 +1,7 @@
+customCommands:
+  - key: "G"
+    description: "Generate commit message with Gemini"
+    context: "files"
+    command: "MESSAGE=$(~/.config/lazygit/scripts/gemini-commit.sh) && git commit -e -m \"$MESSAGE\""
+    loadingText: "Asking Gemini..."
+    output: terminal
